@@ -1,0 +1,10 @@
+
+.SignIn{
+    padding: 60px 0;
+    width:15%; /* value of your choice which suits your alignment */
+}
+
+.SignIn form {
+    margin: 0 auto;
+    max-width: 320px;
+  }
