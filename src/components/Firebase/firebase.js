@@ -20,7 +20,7 @@ const config = {
 
       // ** Auth Interface **
      doCreateUserWithEmailAndPassword = (email, password) =>
-        this.auth.doCreateUserWithEmailAndPassword(email, password);
+        this.auth.createUserWithEmailAndPassword(email, password);
 
 
     doSignInWithEmailAndPassword = (email, password) =>

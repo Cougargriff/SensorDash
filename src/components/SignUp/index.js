@@ -4,46 +4,68 @@ import {
   Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete,
 } from 'antd';
 
+import { FirebaseContext } from '../Firebase';
+import { Link, withRouter } from 'react-router-dom';
+import * as ROUTES from '../../constants/routes';
+
+
 const { Option } = Select;
 const AutoCompleteOption = AutoComplete.Option;
 
-const residences = [{
-  value: 'zhejiang',
-  label: 'Zhejiang',
-  children: [{
-    value: 'hangzhou',
-    label: 'Hangzhou',
-    children: [{
-      value: 'xihu',
-      label: 'West Lake',
-    }],
-  }],
-}, {
-  value: 'jiangsu',
-  label: 'Jiangsu',
-  children: [{
-    value: 'nanjing',
-    label: 'Nanjing',
-    children: [{
-      value: 'zhonghuamen',
-      label: 'Zhong Hua Men',
-    }],
-  }],
-}];
-
-class RegistrationForm extends React.Component {
-  state = {
+const INITIAL_STATE = {
     confirmDirty: false,
     autoCompleteResult: [],
-  };
+    email: '',
+    password: '',
+    error: null,
+};
+
+const SignUpPage = () => (
+  <div>
+    <h1>SignUp</h1>
+    <FirebaseContext.Consumer>
+      {firebase => <SignUpForm firebase={firebase} />}
+    </FirebaseContext.Consumer>
+  </div>
+);
+
+class RegistrationFormBase extends React.Component {
+    state = {
+        confirmDirty: false,
+        autoCompleteResult: [],
+        email: '',
+        password: '',
+        error: null,
+     };
+
 
   handleSubmit = (e) => {
+    const { email, password } = this.state;
+
     e.preventDefault();
     this.props.form.validateFieldsAndScroll((err, values) => {
       if (!err) {
         console.log('Received values of form: ', values);
+        email = values.email;
+        password = values.password;
       }
     });
+
+    this.props.firebase
+      .doCreateUserWithEmailAndPassword(email, password)
+      .then(authUser => {
+        this.props.history.push(ROUTES.HOME);
+
+      })
+      .catch(error => {
+        this.setState({ error });
+      });
+
+      console.log("sdfsdfasdf", this);
+
+
+
+
   }
 
   handleConfirmBlur = (e) => {
@@ -68,19 +90,18 @@ class RegistrationForm extends React.Component {
     callback();
   }
 
-  handleWebsiteChange = (value) => {
-    let autoCompleteResult;
-    if (!value) {
-      autoCompleteResult = [];
-    } else {
-      autoCompleteResult = ['.com', '.org', '.net'].map(domain => `${value}${domain}`);
-    }
-    this.setState({ autoCompleteResult });
-  }
+  onChange = (event) => {
+   this.setState({ [event.target.name]: event.target.value });
+ };
 
   render() {
     const { getFieldDecorator } = this.props.form;
-    const { autoCompleteResult } = this.state;
+    const {
+        autoCompleteResult,
+        email,
+        password,
+        error,
+        } = this.state;
 
     const formItemLayout = {
       labelCol: {
@@ -104,20 +125,9 @@ class RegistrationForm extends React.Component {
         },
       },
     };
-    const prefixSelector = getFieldDecorator('prefix', {
-      initialValue: '86',
-    })(
-      <Select style={{ width: 70 }}>
-        <Option value="86">+86</Option>
-        <Option value="87">+87</Option>
-      </Select>
-    );
-
-    const websiteOptions = autoCompleteResult.map(website => (
-      <AutoCompleteOption key={website}>{website}</AutoCompleteOption>
-    ));
 
     return (
+        <div>
       <Form {...formItemLayout} onSubmit={this.handleSubmit}>
         <Form.Item
           label="E-mail"
@@ -129,7 +139,11 @@ class RegistrationForm extends React.Component {
               required: true, message: 'Please input your E-mail!',
             }],
           })(
-            <Input />
+            <Input
+                placeholder="Email"
+                value={email}
+                onChange={this.onChange}
+            />
           )}
         </Form.Item>
         <Form.Item
@@ -142,7 +156,12 @@ class RegistrationForm extends React.Component {
               validator: this.validateToNextPassword,
             }],
           })(
-            <Input type="password" />
+            <Input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={this.onChange}
+            />
           )}
         </Form.Item>
         <Form.Item
@@ -155,10 +174,14 @@ class RegistrationForm extends React.Component {
               validator: this.compareToFirstPassword,
             }],
           })(
-            <Input type="password" onBlur={this.handleConfirmBlur} />
+            <Input
+                type="password"
+                placeholder="Confirm Password"
+                onBlur={this.handleConfirmBlur}
+            />
           )}
         </Form.Item>
-        
+
         <Form.Item {...tailFormItemLayout}>
           {getFieldDecorator('agreement', {
             valuePropName: 'checked',
@@ -170,10 +193,11 @@ class RegistrationForm extends React.Component {
           <Button  htmlType="submit">Register</Button>
         </Form.Item>
       </Form>
+      </div>
     );
   }
 }
 
-const SignUp = Form.create({ name: 'register' })(RegistrationForm);
+const SignUpForm = withRouter(Form.create({ name: 'register' })(RegistrationFormBase));
 
-export default SignUp;
+export default SignUpPage;
