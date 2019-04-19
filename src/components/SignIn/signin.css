@@ -1,10 +1,16 @@
 
-.SignIn{
-    padding: 60px 0;
-    width:15%; /* value of your choice which suits your alignment */
+
+  #components-form-demo-normal-login .login-form {
+  max-width: 300px;
+}
+#components-form-demo-normal-login .login-form-forgot {
+  float: right;
+}
+#components-form-demo-normal-login .login-form-button {
+
 }
 
-.SignIn form {
-    margin: 0 auto;
-    max-width: 320px;
-  }
+.ant-form-item {
+    margin-left: 40%;
+    width: 20%;
+}
