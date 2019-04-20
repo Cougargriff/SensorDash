@@ -12,7 +12,7 @@ import * as ROUTES from '../../constants/routes';
 
 const SignInPage = () => (
     <div>
-    <h1>SignIn</h1>
+    <h1 id="signin_title">Sign In</h1>
     <FirebaseContext.Consumer>
     {firebase => <SignInForm firebase={firebase} />}
     </FirebaseContext.Consumer>
