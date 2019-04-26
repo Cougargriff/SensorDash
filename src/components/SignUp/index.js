@@ -61,22 +61,24 @@ class RegistrationFormBase extends React.Component {
             this.setState({ error });
         });
 
-        console.log('email', email);
+      console.log("sdfsdfasdf", this);
 
-    }
 
-    handleConfirmBlur = (e) => {
-        const value = e.target.value;
-        this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-    }
 
-    compareToFirstPassword = (rule, value, callback) => {
-        const form = this.props.form;
-        if (value && value !== form.getFieldValue('password')) {
-            callback('Two passwords that you enter is inconsistent!');
-        } else {
-            callback();
-        }
+
+  }
+
+  handleConfirmBlur = (e) => {
+    const value = e.target.value;
+    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
+  }
+
+  compareToFirstPassword = (rule, value, callback) => {
+    const form = this.props.form;
+    if (value && value !== form.getFieldValue('password')) {
+      callback('Two passwords that you enter is inconsistent!');
+    } else {
+      callback();
     }
 
     validateToNextPassword = (rule, value, callback) => {
@@ -87,11 +89,9 @@ class RegistrationFormBase extends React.Component {
         callback();
     }
 
-    onChange = (event) => {
-        this.setState({ [event.target.name]: event.target.value });
-        console.log('name', event.target.name)
-        console.log('onChange :)', event.target.value)
-    };
+  onChange = (event) => {
+   this.setState({ [event.target.name]: event.target.value });
+ };
 
     render() {
         const { getFieldDecorator } = this.props.form;
@@ -142,40 +142,39 @@ class RegistrationFormBase extends React.Component {
                 name="email"
                 placeholder="Email"
                 value={email}
-                onChange={this.onChange.bind(this)}
-                />
-            )}
-            </Form.Item>
-            <Form.Item
-            label="Password"
-            >
-            {getFieldDecorator('password', {
-                rules: [{
-                    required: true, message: 'Please input your password!',
-                }, {
-                    validator: this.validateToNextPassword,
-                }],
-            })(
-                <Input
-                name="password"
+                onChange={this.onChange}
+            />
+          )}
+        </Form.Item>
+        <Form.Item
+          label="Password"
+        >
+          {getFieldDecorator('password', {
+            rules: [{
+              required: true, message: 'Please input your password!',
+            }, {
+              validator: this.validateToNextPassword,
+            }],
+          })(
+            <Input
                 type="password"
                 placeholder="Password"
                 value={password}
-                onChange={this.onChange.bind(this)}
-                />
-            )}
-            </Form.Item>
-            <Form.Item
-            label="Confirm Password"
-            >
-            {getFieldDecorator('confirm', {
-                rules: [{
-                    required: true, message: 'Please confirm your password!',
-                }, {
-                    validator: this.compareToFirstPassword,
-                }],
-            })(
-                <Input
+                onChange={this.onChange}
+            />
+          )}
+        </Form.Item>
+        <Form.Item
+          label="Confirm Password"
+        >
+          {getFieldDecorator('confirm', {
+            rules: [{
+              required: true, message: 'Please confirm your password!',
+            }, {
+              validator: this.compareToFirstPassword,
+            }],
+          })(
+            <Input
                 type="password"
                 placeholder="Confirm Password"
                 onBlur={this.handleConfirmBlur}
