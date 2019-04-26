@@ -63,9 +63,6 @@ class RegistrationFormBase extends React.Component {
 
       console.log("sdfsdfasdf", this);
 
-
-
-
   }
 
   handleConfirmBlur = (e) => {
@@ -80,6 +77,7 @@ class RegistrationFormBase extends React.Component {
     } else {
       callback();
     }
+  }
 
     validateToNextPassword = (rule, value, callback) => {
         const form = this.props.form;
@@ -197,6 +195,7 @@ class RegistrationFormBase extends React.Component {
         );
     }
 }
+
 
 const SignUpForm = withRouter(Form.create({ name: 'register' })(RegistrationFormBase));
 
