@@ -4,7 +4,7 @@ import {
     Form, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete,
 } from 'antd';
 
-import { FirebaseContext } from '../Firebase';
+import { FirebaseContext, withFirebase } from '../Firebase';
 import { Link, withRouter } from 'react-router-dom';
 import * as ROUTES from '../../constants/routes';
 import './signup.css';
@@ -24,9 +24,7 @@ const INITIAL_STATE = {
 const SignUpPage = () => (
     <div>
     <h1 id="signup_title">Sign Up</h1>
-    <FirebaseContext.Consumer>
-    {firebase => <SignUpForm firebase={firebase} />}
-    </FirebaseContext.Consumer>
+    <SignUpForm />
     </div>
 );
 
@@ -197,6 +195,6 @@ class RegistrationFormBase extends React.Component {
 }
 
 
-const SignUpForm = withRouter(Form.create({ name: 'register' })(RegistrationFormBase));
+const SignUpForm = withRouter(withFirebase(Form.create({ name: 'register' })(RegistrationFormBase)));
 
 export default SignUpPage;

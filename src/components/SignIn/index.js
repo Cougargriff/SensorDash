@@ -5,7 +5,7 @@ import {
 
 import 'antd/dist/antd.css';
 import './signin.css';
-import { FirebaseContext } from '../Firebase';
+import { FirebaseContext, withFirebase } from '../Firebase';
 import { Link, withRouter } from 'react-router-dom';
 
 import * as ROUTES from '../../constants/routes';
@@ -13,9 +13,7 @@ import * as ROUTES from '../../constants/routes';
 const SignInPage = () => (
     <div>
     <h1 id="signin_title">Sign In</h1>
-    <FirebaseContext.Consumer>
-    {firebase => <SignInForm firebase={firebase} />}
-    </FirebaseContext.Consumer>
+    <SignInForm/>
     </div>
 );
 
@@ -135,6 +133,6 @@ class NormalLoginFormBase extends React.Component {
     }
 }
 
-const SignInForm = withRouter(Form.create({ name: 'normal_login' })(NormalLoginFormBase));
+const SignInForm = withRouter(withFirebase(Form.create({ name: 'normal_login' })(NormalLoginFormBase)));
 
 export default SignInPage;
