@@ -1,0 +1,20 @@
+
+
+  #components-form-demo-normal-login .login-form {
+  max-width: 300px;
+}
+#components-form-demo-normal-login .login-form-forgot {
+  float: right;
+}
+#components-form-demo-normal-login .login-form-button {
+
+}
+
+.ant-form-item {
+    margin-left: 40%;
+    width: 20%;
+}
+
+#signin_title {
+    margin-left: 40%;
+}
