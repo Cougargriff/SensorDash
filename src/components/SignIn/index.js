@@ -86,7 +86,7 @@ class NormalLoginFormBase extends React.Component {
                 name="email"
                 value={password}
                 onChange={this.onChange.bind(this)}
-                placeholder="Username"
+                placeholder="email"
                 />
             )}
             </Form.Item>

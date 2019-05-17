@@ -30,11 +30,7 @@ const SignUpPage = () => (
 
 class RegistrationFormBase extends React.Component {
     state = {
-        confirmDirty: false,
-        autoCompleteResult: [],
-        email: '',
-        password: '',
-        error: null,
+        ...INITIAL_STATE
     };
 
 
@@ -51,9 +47,8 @@ class RegistrationFormBase extends React.Component {
         this.props.firebase
         .doCreateUserWithEmailAndPassword(email, password)
         .then(authUser => {
-            console.log('AUTH SUCCESSFUL');
-            this.props.history.push(ROUTES.HOME);
-
+          console.log('AUTH SUCCESSFUL', authUser);
+          this.props.history.push(ROUTES.HOME);
         })
         .catch(error => {
             this.setState({ error });
@@ -153,6 +148,7 @@ class RegistrationFormBase extends React.Component {
             }],
           })(
             <Input
+                name="password"
                 type="password"
                 placeholder="Password"
                 value={password}
