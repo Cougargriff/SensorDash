@@ -1,32 +1,38 @@
-import React from 'react';
+import React, { Component }from 'react';
 import {
     Form, Icon, Input, Button, Checkbox,
 } from 'antd';
 
 import 'antd/dist/antd.css';
 import './signin.css';
-import { FirebaseContext } from '../Firebase';
 import { Link, withRouter } from 'react-router-dom';
+
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { compose } from 'redux'
+import { firebaseConnect, isLoaded, isEmpty } from 'react-redux-firebase'
+
+
 
 import * as ROUTES from '../../constants/routes';
 
+
+
 const SignInPage = () => (
     <div>
-    <h1 id="signin_title">Sign In</h1>
-    <FirebaseContext.Consumer>
-    {firebase => <SignInForm firebase={firebase} />}
-    </FirebaseContext.Consumer>
+        <h1 id="signin_title">Sign In</h1>
+        <SignInForm/>
     </div>
 );
 
-class NormalLoginFormBase extends React.Component {
-    state = {
-        confirmDirty: false,
-        autoCompleteResult: [],
-        email: '',
-        password: '',
-        error: null,
-    };
+class NormalLoginFormBase extends Component {
+
+    static propTypes = {
+        auth: PropTypes.object,
+        firebase: PropTypes.shape({
+            login: PropTypes.func.isRequired
+        }),
+    }
 
     handleSubmit = (e) => {
         const { email, password } = this.state;
@@ -35,38 +41,28 @@ class NormalLoginFormBase extends React.Component {
 
         this.props.form.validateFields((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
+                console.log('Received values of form: ', this);
             }
         });
 
-        this.props.firebase
-        .doSignInWithEmailAndPassword(email, password)
-        .then(authUser => {
-            console.log('AUTH SUCCESSFUL');
+        // perform login with firebase auth
+        
+        this.props.firebase.login({
+            email: email,
+            password: password
+        }).then(() => {
             this.props.history.push(ROUTES.HOME);
-
         })
-        .catch(error => {
-            this.setState({ error });
-        });
-
-
+        
     }
 
     onChange = (event) => {
         this.setState({ [event.target.name]: event.target.value });
-        console.log('name', event.target.name)
-        console.log('onChange :)', event.target.value)
     };
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const {
-            autoCompleteResult,
-            email,
-            password,
-            error,
-        } = this.state;
+        
 
         return (
             <Form onSubmit={this.handleSubmit} className="login-form">
@@ -86,9 +82,8 @@ class NormalLoginFormBase extends React.Component {
                     />
                 }
                 name="email"
-                value={password}
                 onChange={this.onChange.bind(this)}
-                placeholder="Username"
+                placeholder="email"
                 />
             )}
             </Form.Item>
@@ -109,7 +104,6 @@ class NormalLoginFormBase extends React.Component {
                 }
                 name="password"
                 type="password"
-                value={email}
                 onChange={this.onChange.bind(this)}
                 placeholder="Password"
                 />
@@ -127,14 +121,13 @@ class NormalLoginFormBase extends React.Component {
             <Button htmlType="submit" className="login-form-button">
             Log in
             </Button>
-            <br />
-            Or <a href="signup">Register Now!</a>
             </Form.Item>
             </Form>
         );
     }
 }
 
-const SignInForm = withRouter(Form.create({ name: 'normal_login' })(NormalLoginFormBase));
+const SignInForm = withRouter(Form.create({ name: 'normal_login' })(firebaseConnect()(NormalLoginFormBase)));
 
+ 
 export default SignInPage;

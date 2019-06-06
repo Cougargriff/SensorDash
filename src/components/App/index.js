@@ -1,34 +1,42 @@
-import React from 'react';
-import { BrowserRouter as Router, Route} from 'react-router-dom';
+import React, { Component } from 'react';
 
-import Navigation from '../Navigation';
-import LandingPage from '../Landing';
-import SignUpPage from '../SignUp';
-import SignInPage from '../SignIn';
-import PasswordForgetPage from '../PasswordForget';
-import HomePage from '../Home';
-import AccountPage from '../Account';
-import AdminPage from '../Admin';
+import { Provider } from 'react-redux'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore' 
+import { ReactReduxFirebaseProvider, firebaseReducer } from 'react-redux-firebase'
+import { createFirestoreInstance, firestoreReducer } from 'redux-firestore' // <- needed if using firestore
 
-import * as ROUTES from '../../constants/routes';
+import createStore from '../../redux/createReduxStore'
+import fbConfig from '../../redux/firebaseConfig'
+
+import RouterElement from './routing'
+
+const rrfConfig = {
+  userProfile: 'users',
+  useFirestoreForProfile: true // Firestore for Profile instead of Realtime DB
+}
+
+const store = createStore()
+
+const rrfProps = {
+  firebase,
+  config: rrfConfig,
+  dispatch: store.dispatch,
+  createFirestoreInstance // <- needed if using firestore
+}
+
+
+firebase.initializeApp(fbConfig)
+firebase.firestore();
+
 
 const App = () => (
-    <Router>
-        <div>
-
-        <Navigation />
-
-        <hr />
-
-        <Route exact path={ROUTES.LANDING} component={LandingPage} />
-        <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
-        <Route path={ROUTES.SIGN_IN} component={SignInPage} />
-        <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
-        <Route path={ROUTES.HOME} component={HomePage} />
-        <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-        <Route path={ROUTES.ADMIN} component={AdminPage} />
-        </div>
-    </Router>
+  <Provider store={store}>
+    <ReactReduxFirebaseProvider {...rrfProps}>
+      <RouterElement />
+    </ReactReduxFirebaseProvider>
+  </Provider>
 );
 
-export default App;
+export default App
