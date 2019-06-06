@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { compose } from 'redux'
-import { firebaseConnect, isLoaded, isEmpty } from 'react-redux-firebase'
+import { firebaseConnect, isLoaded, isEmpty, populate, firestoreConnect } from 'react-redux-firebase'
 
 import './maps.css';
 import GoogleMapReact from 'google-map-react';
@@ -26,11 +26,13 @@ class Home extends Component {
 
   componentDidMount() {
     console.log("HOME DID mount", this.props);
-    this.setState({ loading: true });
+    //var user = this.fireStore.get(this.props.fireStore, 'users/'.concat(this.props.auth.uid, '/'))
+    // how to get users??
   }
 
-
   render() {
+    console.log(this)
+
     if(!isLoaded(this.props.auth) || isEmpty(this.props.auth)) {
       return MapViewNoAuth();
     }
@@ -66,7 +68,8 @@ const MapViewAuth = () => (
 
 
 const mapStateToProps = state => {
-  return { auth: state.firebase.auth }
+  return { auth: state.firebase.auth, 
+           fireStore: state.firestore}
 }
 
 const mapDispatchToProps = dispatch => {
@@ -75,5 +78,6 @@ const mapDispatchToProps = dispatch => {
 
 export default compose(
   connect(mapStateToProps, mapDispatchToProps),
-  firebaseConnect()
+  firebaseConnect(),
+  firestoreConnect()
 )(Home);

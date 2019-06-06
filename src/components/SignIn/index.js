@@ -128,6 +128,5 @@ class NormalLoginFormBase extends Component {
 }
 
 const SignInForm = withRouter(Form.create({ name: 'normal_login' })(firebaseConnect()(NormalLoginFormBase)));
-
  
 export default SignInPage;

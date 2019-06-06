@@ -4,7 +4,12 @@ import { reactReduxFirebase } from 'react-redux-firebase'
 import { rootReducer } from './reducers'
 import { composeWithDevTools } from 'redux-devtools-extension'
 
-const initialState = {}
+
+
+const initialState = {
+    hr_list: [],
+    triggers: [],
+}
 
 
 export default () => {
