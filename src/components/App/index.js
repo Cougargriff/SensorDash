@@ -1,59 +1,42 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route} from 'react-router-dom';
-import { withFirebase } from '../Firebase'
 
-import Navigation from '../Navigation';
-import LandingPage from '../Landing';
-import SignUpPage from '../SignUp';
-import SignInPage from '../SignIn';
-import PasswordForgetPage from '../PasswordForget';
-import HomePage from '../Home';
-import AccountPage from '../Account';
-import AdminPage from '../Admin';
+import { Provider } from 'react-redux'
+import firebase from 'firebase/app'
+import 'firebase/auth'
+import 'firebase/firestore' 
+import { ReactReduxFirebaseProvider, firebaseReducer } from 'react-redux-firebase'
+import { createFirestoreInstance, firestoreReducer } from 'redux-firestore' // <- needed if using firestore
 
-import * as ROUTES from '../../constants/routes';
+import createStore from '../../redux/createReduxStore'
+import fbConfig from '../../redux/firebaseConfig'
 
+import RouterElement from './routing'
 
-class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      authUser: null,
-    };
-  }
-
-  // viewDidLoad ~~
-  componentDidMount() {
-    this.AuthListener = this.props.firebase.auth.onAuthStateChanged(authUser => {
-      console.log("auth user updated", authUser);
-
-      authUser
-        ? this.setState({ authUser })
-        : this.setState({ authUser: null });
-    });
-  }
-
-  componentWillUnmount() {
-    this.AuthListener();
-  }
-
-  render() {
-    return (
-      <Router>
-        <div>
-          <Navigation authUser={this.state.authUser} />
-          <hr/>
-          <Route exact path={ROUTES.LANDING} component={LandingPage} />
-          <Route path={ROUTES.SIGN_UP} component={SignUpPage} />
-          <Route path={ROUTES.SIGN_IN} component={SignInPage} />
-          <Route path={ROUTES.PASSWORD_FORGET} component={PasswordForgetPage} />
-          <Route authUser={this.state.authUser} path={ROUTES.HOME} component={HomePage} />
-          <Route path={ROUTES.ACCOUNT} component={AccountPage} />
-          <Route path={ROUTES.ADMIN} component={AdminPage} />
-        </div>
-      </Router>
-    );
-  }
+const rrfConfig = {
+  userProfile: 'users',
+  useFirestoreForProfile: true // Firestore for Profile instead of Realtime DB
 }
 
-export default withFirebase(App);
+const store = createStore()
+
+const rrfProps = {
+  firebase,
+  config: rrfConfig,
+  dispatch: store.dispatch,
+  createFirestoreInstance // <- needed if using firestore
+}
+
+
+firebase.initializeApp(fbConfig)
+firebase.firestore();
+
+
+const App = () => (
+  <Provider store={store}>
+    <ReactReduxFirebaseProvider {...rrfProps}>
+      <RouterElement />
+    </ReactReduxFirebaseProvider>
+  </Provider>
+);
+
+export default App

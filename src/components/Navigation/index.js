@@ -1,12 +1,37 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { compose } from 'redux'
+import { firebaseConnect, isLoaded, isEmpty } from 'react-redux-firebase'
 import * as ROUTES from '../../constants/routes';
 import SignOutButton from '../SignOut'
 
-const Navigation = ({ authUser }) => (
-  <div>{ authUser ? <NavigationAuth /> : <NavigationNonAuth /> }</div>
-);
+
+
+class Navigation extends Component {
+  static propTypes = {
+    auth: PropTypes.object,
+    firebase: PropTypes.shape({
+      login: PropTypes.func.isRequired,
+      logout: PropTypes.func.isRequired,
+    }),
+  }
+
+  render() {
+
+    console.log(isLoaded())
+    if (!isLoaded(this.props.auth)) {
+      return null
+    }
+    if (isEmpty(this.props.auth)) {
+      return NavigationNoAuth()
+    }
+
+    return NavigationAuth()
+  }
+
+}
 
 const NavigationAuth = () => (
   <ul>
@@ -14,15 +39,12 @@ const NavigationAuth = () => (
       <Link to={ROUTES.HOME}>Home</Link>
     </li>
     <li>
-      <Link to={ROUTES.ACCOUNT}>Account</Link>
-    </li>
-    <li>
         <SignOutButton />
       </li>
   </ul>
 );
 
-const NavigationNonAuth = () => (
+const NavigationNoAuth = () => (
   <ul>
     <li>
       <Link to={ROUTES.LANDING}>Landing</Link>
@@ -33,4 +55,13 @@ const NavigationNonAuth = () => (
   </ul>
 );
 
-export default Navigation;
+const mapStateToProps = state => {
+  return { auth: state.firebase.auth }
+}
+
+export default compose(
+  firebaseConnect(),
+  connect(mapStateToProps),
+)(Navigation)
+
+

@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
-import { withFirebase } from '../Firebase';
 
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { compose } from 'redux'
+import { firebaseConnect, isLoaded, isEmpty } from 'react-redux-firebase'
 
 import './maps.css';
 import GoogleMapReact from 'google-map-react';
@@ -13,33 +16,26 @@ const HomePage = ({ authUser }) => (
 
 
 class Home extends Component {
-
-  constructor(props) {
-    super(props);
-
-    console.log("props", this.props);
-    console.log("auth", this);
-
-    this.state = {
-      loading: false,
-      authUser: this.props.authUser,
-      users: {},
-    };
-
-    console.log("is user auth?", this.state);
-
+  static propTypes = {
+    auth: PropTypes.object,
+    firebase: PropTypes.shape({
+      login: PropTypes.func.isRequired,
+      logout: PropTypes.func.isRequired,
+    }),
   }
 
   componentDidMount() {
-    console.log("home mount", this);
+    console.log("HOME DID mount", this.props);
     this.setState({ loading: true });
   }
 
 
   render() {
-    return (
-      (this.state.authUser && MapViewAuth()) || MapViewNoAuth()
-    );
+    if(!isLoaded(this.props.auth) || isEmpty(this.props.auth)) {
+      return MapViewNoAuth();
+    }
+
+    return MapViewAuth();
   }
 }
 
@@ -68,4 +64,16 @@ const MapViewAuth = () => (
   </div>
 );
 
-export default withFirebase(Home);
+
+const mapStateToProps = state => {
+  return { auth: state.firebase.auth }
+}
+
+const mapDispatchToProps = dispatch => {
+}
+
+
+export default compose(
+  connect(mapStateToProps, mapDispatchToProps),
+  firebaseConnect()
+)(Home);
