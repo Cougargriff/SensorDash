@@ -14,6 +14,10 @@ const HomePage = ({ authUser }) => (
   <div>{ authUser ? <MapViewAuth /> : <MapViewNoAuth /> }</div>
 );
 
+const trigger_pops = [
+  { child: 'users', root: 'triggers'}
+]
+
 
 class Home extends Component {
   static propTypes = {
@@ -26,8 +30,8 @@ class Home extends Component {
 
   componentDidMount() {
     console.log("HOME DID mount", this.props);
-    //var user = this.fireStore.get(this.props.fireStore, 'users/'.concat(this.props.auth.uid, '/'))
-    // how to get users??
+  
+
   }
 
   render() {
@@ -68,11 +72,12 @@ const MapViewAuth = () => (
 
 
 const mapStateToProps = state => {
-  return { auth: state.firebase.auth, 
-           fireStore: state.firestore}
+  return { 
+    auth: state.firebase.auth,
+  }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = {
 }
 
 

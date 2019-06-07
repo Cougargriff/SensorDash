@@ -7,8 +7,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 
 
 const initialState = {
-    hr_list: [],
-    triggers: [],
+   
 }
 
 
