@@ -12,6 +12,13 @@ import { Charts, ChartContainer, ChartRow, YAxis, LineChart, Resizable } from "r
 import { TimeSeries, TimeRange } from "pondjs";
 import { firestore } from 'firebase';
 
+var gMap = null;
+var gMaps = null;
+
+const MAP_ZOOM = 15
+const INITIAL_LAT = 35.289
+const INITIAL_LNG = -120.6596
+
 
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
 
@@ -44,16 +51,36 @@ class Home extends Component {
       
     }
 
-    
-    else
-    {
-
-    }
-
-    
+    renderPolyLines(this.props)
 
     return MapViewAuth(this.props);
   }
+}
+
+const renderPolyLines = (props) => {
+  if(props.fire != null)
+  {
+
+    if(props.fire.data.location_history != null)
+    {
+      let paths = [];
+
+      for(var location in props.fire.data.location_history)
+      {
+        var l = props.fire.data.location_history[location];
+        paths.push({lat: l.latitude, lng: l.longitude});
+      }
+      console.log("gmaps", gMaps)
+      let polyLine = new gMaps.Polyline({
+        path: paths,
+        geodesic: true,
+        strokeColor: '#00a1e1',
+        strokeOpacity: 1.0,
+        strokeWeight: 5
+      })
+      polyLine.setMap(gMap)
+    }
+}
 }
 
 const getHRSeries = (props) => {
@@ -114,8 +141,11 @@ const getTimeStamp = () => {
 
   return date;
 }
+
 const handleMapLoad = (map, maps, props) => {
   // todo poly lines?
+  gMap = map;
+  gMaps = maps;  
 }
 
 
@@ -129,11 +159,15 @@ const MapViewAuth = (props) => (
 
   <div>
       <Resizable>
-        <ChartContainer timeRange={getHRSeries(props).timerange()}> 
+        <ChartContainer timeRange={getHRSeries(props).timerange()}>
           <ChartRow height="500"> 
-            <YAxis id="axis1" label="Y AXIS!" min={0} max={100} width="80" type="linear"/>
+            <YAxis id="axis1" label="BPM" min={0} max={100} width="80" type="linear"/>
             <Charts>
-                <LineChart axis="axis1" series={getHRSeries(props)}/>
+                <LineChart 
+                  axis="axis1" 
+                  series={getHRSeries(props)}
+                  smooth={true}
+                  />
             </Charts>
           </ChartRow>
         </ChartContainer>
@@ -144,16 +178,16 @@ const MapViewAuth = (props) => (
         yesIWantToUseGoogleMapApiInternals
         onGoogleApiLoaded={ ({map, maps, props}) => handleMapLoad(map, maps, props) }
         defaultCenter={{
-          lat: 35.282753,
-          lng: -120.659615
+          lat: INITIAL_LAT,
+          lng: INITIAL_LNG
         }}
-        defaultZoom={10}
+        defaultZoom={MAP_ZOOM}
       >
-        <AnyReactComponent
+        {/* <AnyReactComponent
           lat={59.955413}
           lng={30.337844}
           text="My Marker"
-        />
+        /> */}
       </GoogleMapReact>
     </div>
   </div>
