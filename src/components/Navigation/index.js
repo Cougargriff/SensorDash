@@ -19,8 +19,6 @@ class Navigation extends Component {
   }
 
   render() {
-
-    console.log(isLoaded())
     if (!isLoaded(this.props.auth)) {
       return null
     }

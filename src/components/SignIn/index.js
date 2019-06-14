@@ -5,12 +5,11 @@ import {
 
 import 'antd/dist/antd.css';
 import './signin.css';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 import PropTypes from 'prop-types'
-import { connect } from 'react-redux'
-import { compose } from 'redux'
-import { firebaseConnect, isLoaded, isEmpty } from 'react-redux-firebase'
+
+import { firebaseConnect} from 'react-redux-firebase'
 
 
 
