@@ -91,11 +91,23 @@ const getHRSeries = (props) => {
     var hr_data = props.fire.data.hr_data
     var p = [];
     var keys = Object.keys(hr_data);
+   // var previous_time = 10000000000;
 
     for(var i = 0; i < keys.length; i++)
     {
       var time = keys[i];
+
+      // account for hours of no hr in graph
+      // if(time - previous_time > 6000)
+      // {
+      //   for(var k = 0; k < 6000; k+= 10)
+      //   {
+      //     p.push([(previous_time +k) * 1000, 0]);
+      //   }
+      // }
       p.push([time * 1000, hr_data[time]])
+
+      // previous_time = time;
     }
 
     data = {
